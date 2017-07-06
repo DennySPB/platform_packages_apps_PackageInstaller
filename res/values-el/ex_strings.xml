@@ -17,8 +17,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Tab label for version information [CHAR LIMIT=20] -->
-  <string name="appVersion">Πληροφορίες έκδοσης</string>
-  <string name="currentVersion">Τρέχουσα έκδοση:</string>
+  <string name="appVersion">Πληροφορίες Έκδοσης</string>
+  <string name="currentVersion">Τρέχουσα Έκδοση:</string>
   <string name="newVersion">Νέα Έκδοση:</string>
   <string name="not_available">μη διαθέσιμο</string>
   <!-- Body text for new tab when there are no permissions [CHAR LIMIT=NONE] -->
