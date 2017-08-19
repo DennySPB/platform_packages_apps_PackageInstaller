@@ -17,7 +17,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Tab label for version information [CHAR LIMIT=20] -->
-  <string name="appVersion">Información de versión</string>
+  <string name="appVersion">Información de la versión</string>
   <string name="currentVersion">Versión Actual:</string>
   <string name="newVersion">Nueva versión:</string>
   <string name="not_available">No Disponible</string>
