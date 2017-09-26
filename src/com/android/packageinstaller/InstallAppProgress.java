@@ -52,6 +52,13 @@ import com.android.packageinstaller.permission.utils.IoUtils;
 
 import com.android.internal.content.PackageHelper;
 
+import android.app.IThemeCallback;
+import android.app.ThemeManager;
+import android.provider.Settings.Secure;
+import android.os.Handler;
+import android.os.Looper;
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -68,6 +75,25 @@ import java.util.List;
  * the existing package is replaced with the new one.
  */
 public class InstallAppProgress extends Activity implements View.OnClickListener, OnCancelListener {
+    private int mTheme;
+
+    private ThemeManager mThemeManager;
+    private final IThemeCallback mThemeCallback = new IThemeCallback.Stub() {
+
+        @Override
+        public void onThemeChanged(int themeMode, int color) {
+            onCallbackAdded(themeMode, color);
+            InstallAppProgress.this.runOnUiThread(() -> {
+                InstallAppProgress.this.recreate();
+            });
+        }
+
+        @Override
+        public void onCallbackAdded(int themeMode, int color) {
+            mTheme = color;
+        }
+    };
+
     private final String TAG="InstallAppProgress";
     private static final String BROADCAST_ACTION =
             "com.android.packageinstaller.ACTION_INSTALL_COMMIT";
@@ -188,6 +214,21 @@ public class InstallAppProgress extends Activity implements View.OnClickListener
 
     @Override
     public void onCreate(Bundle icicle) {
+	  final int themeMode = Secure.getInt(getContentResolver(),
+                Secure.THEME_PRIMARY_COLOR, 0);
+        final int accentColor = Secure.getInt(getContentResolver(),
+                Secure.THEME_ACCENT_COLOR, 0);
+        mThemeManager = (ThemeManager) getSystemService(Context.THEME_SERVICE);
+        if (mThemeManager != null) {
+            mThemeManager.addCallback(mThemeCallback);
+        }
+        if (themeMode != 0 || accentColor != 0) {
+            getTheme().applyStyle(mTheme, true);
+        }
+        if (themeMode == 2) {
+            getTheme().applyStyle(R.style.settings_pixel_theme, true);
+        }
+
         super.onCreate(icicle);
         Intent intent = getIntent();
         mAppInfo = intent.getParcelableExtra(PackageUtil.INTENT_ATTR_APPLICATION_INFO);
