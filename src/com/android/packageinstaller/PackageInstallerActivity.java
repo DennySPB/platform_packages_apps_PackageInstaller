@@ -61,6 +61,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.app.IThemeCallback;
+import android.app.ThemeManager;
+import android.provider.Settings.Secure;
+import android.os.Handler;
+import android.os.Looper;
+
 /*
  * This activity is launched when a new application is installed via side loading
  * The package is first parsed and the user is notified of parse errors via a dialog.
@@ -72,6 +78,26 @@ import java.io.OutputStream;
  * sub activity. All state transitions are handled in this activity
  */
 public class PackageInstallerActivity extends Activity implements OnCancelListener, OnClickListener {
+
+    private int mTheme;
+
+    private ThemeManager mThemeManager;
+    private final IThemeCallback mThemeCallback = new IThemeCallback.Stub() {
+
+        @Override
+        public void onThemeChanged(int themeMode, int color) {
+            onCallbackAdded(themeMode, color);
+            PackageInstallerActivity.this.runOnUiThread(() -> {
+                PackageInstallerActivity.this.recreate();
+            });
+        }
+
+        @Override
+        public void onCallbackAdded(int themeMode, int color) {
+            mTheme = color;
+        }
+    };
+
     private static final String TAG = "PackageInstaller";
 
     private static final int REQUEST_ENABLE_UNKNOWN_SOURCES = 1;
@@ -437,6 +463,21 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
 
     @Override
     protected void onCreate(Bundle icicle) {
+	  final int themeMode = Secure.getInt(getContentResolver(),
+                Secure.THEME_PRIMARY_COLOR, 0);
+        final int accentColor = Secure.getInt(getContentResolver(),
+                Secure.THEME_ACCENT_COLOR, 0);
+        mThemeManager = (ThemeManager) getSystemService(Context.THEME_SERVICE);
+        if (mThemeManager != null) {
+            mThemeManager.addCallback(mThemeCallback);
+        }
+        if (themeMode != 0 || accentColor != 0) {
+            getTheme().applyStyle(mTheme, true);
+        }
+        if (themeMode == 2) {
+            getTheme().applyStyle(R.style.settings_pixel_theme, true);
+        }
+
         super.onCreate(icicle);
 
         mPm = getPackageManager();
