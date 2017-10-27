@@ -83,25 +83,6 @@ import android.os.Looper;
  */
 public class PackageInstallerActivity extends Activity implements OnCancelListener, OnClickListener {
 
-    private int mTheme;
-
-    private ThemeManager mThemeManager;
-    private final IThemeCallback mThemeCallback = new IThemeCallback.Stub() {
-
-        @Override
-        public void onThemeChanged(int themeMode, int color) {
-            onCallbackAdded(themeMode, color);
-            PackageInstallerActivity.this.runOnUiThread(() -> {
-                PackageInstallerActivity.this.recreate();
-            });
-        }
-
-        @Override
-        public void onCallbackAdded(int themeMode, int color) {
-            mTheme = color;
-        }
-    };
-
     private static final String TAG = "PackageInstaller";
 
     private static final int REQUEST_ENABLE_UNKNOWN_SOURCES = 1;

@@ -79,24 +79,6 @@ import java.util.List;
  * the existing package is replaced with the new one.
  */
 public class InstallAppProgress extends Activity implements View.OnClickListener, OnCancelListener {
-    private int mTheme;
-
-    private ThemeManager mThemeManager;
-    private final IThemeCallback mThemeCallback = new IThemeCallback.Stub() {
-
-        @Override
-        public void onThemeChanged(int themeMode, int color) {
-            onCallbackAdded(themeMode, color);
-            InstallAppProgress.this.runOnUiThread(() -> {
-                InstallAppProgress.this.recreate();
-            });
-        }
-
-        @Override
-        public void onCallbackAdded(int themeMode, int color) {
-            mTheme = color;
-        }
-    };
 
     private final String TAG="InstallAppProgress";
     private static final String BROADCAST_ACTION =
